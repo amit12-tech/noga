@@ -1,4 +1,7 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>">
 <title>A Date With Noga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,6 +9,7 @@
 
 <style>
   *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
 
   :root {
     --ground:      #FFF0F5;
@@ -95,7 +99,11 @@
     align-items: center;
     justify-content: center;
     gap: 22px;
-    padding: 20px 16px;
+    padding:
+      calc(20px + env(safe-area-inset-top, 0px))
+      calc(16px + env(safe-area-inset-right, 0px))
+      calc(20px + env(safe-area-inset-bottom, 0px))
+      calc(16px + env(safe-area-inset-left, 0px));
     overflow-y: auto;
   }
 
@@ -524,7 +532,7 @@
       btn.style.setProperty("--s", scale.toFixed(3));
 
       var w = btn.offsetWidth, h = btn.offsetHeight;
-      var m = 14;
+      var m = 20;
       var maxX = Math.max(m, window.innerWidth - w - m);
       var maxY = Math.max(m, window.innerHeight - h - m);
       var best = null, bestScore = -1;
