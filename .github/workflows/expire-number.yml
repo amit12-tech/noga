@@ -1,0 +1,43 @@
+# Strips Amit's phone number out of the published page a week after it went up.
+# The page also hides the button on its own after the same date (EXPIRES in
+# index.html); this workflow is what actually removes the number from the HTML.
+name: Expire contact number
+
+on:
+  schedule:
+    - cron: "0 3 27 9 *"   # 2026-09-27, 03:00 UTC
+  workflow_dispatch:        # or run it early from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  expire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove the number from index.html
+        run: |
+          python3 - <<'PY'
+          import io
+          p = "index.html"
+          s = io.open(p, encoding="utf-8").read()
+          if 'atob("OTcyNTQ0ODY2MzIy")' in s:
+              s = s.replace('atob("OTcyNTQ0ODY2MzIy")', '""')
+              io.open(p, "w", encoding="utf-8").write(s)
+              print("removed")
+          else:
+              print("already gone")
+          PY
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Expire: strip contact number from the invitation page"
+          git push

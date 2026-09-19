@@ -299,6 +299,27 @@
   }
   .recap b { font-size: 1.05rem; font-weight: 800; }
 
+  .send {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 15px 32px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #FFF4F8;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 12px 24px -12px var(--accent);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .send:hover { transform: translateY(-3px) scale(1.03); }
+  .send:active { transform: translateY(0) scale(.98); }
+  .send:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+
   .redo {
     margin-top: 22px;
     background: none;
@@ -396,14 +417,21 @@
       <div><span>When</span><b>22.09.26</b></div>
       <div><span>What</span><b id="donePick">Bowling</b></div>
     </div>
-    <p class="whisper">I'll pick you up. Wear something you can laugh in.</p>
-    <button class="redo" id="redo">actually, let's do something else</button>
+    <p class="whisper" id="sendNote">One last tap so I know it's official.</p>
+    <a class="send" id="send" href="#" target="_blank" rel="noopener">Tell Amit 💌</a>
+    <div><button class="redo" id="redo">actually, let's do something else</button></div>
   </section>
 </main>
 
 <script>
 (function () {
   "use strict";
+
+  /* Amit's WhatsApp number, base64'd so scrapers crawling this public page
+     don't pick it up as a phone number. Expires on its own a week out; a
+     scheduled workflow strips it from the page entirely on the same date. */
+  var WHATSAPP = atob("OTcyNTQ0ODY2MzIy");
+  var EXPIRES = Date.parse("2026-09-27T00:00:00Z");
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -578,8 +606,19 @@
 
   document.querySelectorAll("[data-pick]").forEach(function (b) {
     b.addEventListener("click", function () {
-      document.getElementById("donePick").textContent = b.dataset.pick;
+      var pick = b.dataset.pick;
+      document.getElementById("donePick").textContent = pick;
       document.getElementById("doneGlyph").textContent = b.dataset.glyph;
+      var phrase = pick.charAt(0).toLowerCase() + pick.slice(1);
+      var send = document.getElementById("send");
+      var note = document.getElementById("sendNote");
+      if (Date.now() < EXPIRES) {
+        send.href = "https://wa.me/" + WHATSAPP + "?text=" +
+          encodeURIComponent("I said yes \uD83D\uDC97 22.09.26 \u2014 " + phrase + " it is.");
+      } else {
+        send.hidden = true;
+        note.textContent = "I'll pick you up. Wear something you can laugh in.";
+      }
       hearts(b, 26);
       show("done");
     });
