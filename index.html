@@ -441,7 +441,7 @@
   /* Amit's WhatsApp number, base64'd so scrapers crawling this public page
      don't pick it up as a phone number. Expires on its own a week out; a
      scheduled workflow strips it from the page entirely on the same date. */
-  var WHATSAPP = atob("OTcyNTQ0ODY2MzIy");
+  var WHATSAPP = "";
   var EXPIRES = Date.parse("2026-09-27T00:00:00Z");
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
